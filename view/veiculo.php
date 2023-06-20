@@ -23,4 +23,20 @@ class ViewVeiculo{
         }
         echo json_encode($this->retorno);
     }
+
+
+    public function listarID($id,$veiculos){
+        $this->limparRetorno();
+        if($id){
+            $this->retorno["result"] = true;
+            $this->retorno["dados"] = $veiculos;
+            $this->retorno["itens"] = $id;
+            http_response_code(200);
+        }
+        else{
+            http_response_code(404);
+            $this->retorno['info'] = "Nenhum resultado correspondente para esta consulta.";
+        }
+        echo json_encode($this->retorno);
+    }
 }
