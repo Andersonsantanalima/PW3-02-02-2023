@@ -14,15 +14,7 @@ switch($method){
             }
             else if($url[0] == "id"){
                 $id = @$url[1];
-                $id = $veiculo->consultarPorId(@$url[1]);
-                $viewVeiculo->listarID($veiculo,$id);
-
-                echo json_encode(
-                    [
-                        "id"=>$id,
-                        "Info"=>"Não encontrado"
-                    ]
-                );
+                $viewVeiculo->listarID($veiculo->consultarPorId(@$url[1]));               
             }
 
             }

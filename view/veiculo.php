@@ -25,12 +25,12 @@ class ViewVeiculo{
     }
 
 
-    public function listarID($id,$veiculos){
+    public function listarID($veiculo){
         $this->limparRetorno();
-        if($id){
+        if($veiculo){
             $this->retorno["result"] = true;
-            $this->retorno["dados"] = $veiculos;
-            $this->retorno["itens"] = $id;
+            $this->retorno["dados"] = $veiculo;
+            $this->retorno["itens"] = 1;
             http_response_code(200);
         }
         else{
