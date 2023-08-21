@@ -25,7 +25,7 @@ class Veiculo {
         return (new BaseDeDados())->getConexao();
     }
      
-    public function cadastrar(): bool {
+    public function cadastrar(): bool | Veiculo {
         try {
             $cmdSql = 'INSERT INTO veiculo(modelo,ano_fabricacao,ano_modelo,cor,num_portas,foto,categoria_id,montadora_id,tipo_cambio,tipo_direcao) VALUES (:modelo,:ano_fabricacao,:ano_modelo,:cor,:num_portas,:foto,:categoria_id,:montadora_id,:tipo_cambio,:tipo_direcao)';
             $pdo = $this->cx();
@@ -97,17 +97,31 @@ class Veiculo {
         }
     }
 
-    public function consultarPorId($id): Veiculo | bool {
+
+    private function carregar(Veiculo $v){
+        $this->id             = $v->id;
+        $this->modelo         = $v->modelo;
+        $this->ano_fabricacao = $v->ano_fabricacao;
+        $this->ano_modelo     = $v->ano_modelo;
+        $this->cor            = $v->cor;
+        $this->num_portas     = $v->num_portas;
+        $this->foto           = $v->foto;
+        $this->categoria_id   = $v->categoria_id;
+        $this->montadora_id   = $v->montadora_id;
+        $this->tipo_cambio    = $v->tipo_cambio;
+        $this->tipo_direcao   = $v->tipo_direcao;
+        $this->data_cadastro  = $v->data_cadastro;
+        $this->data_alteracao = $v->data_alteracao;
+    }
+
+    public function consultarPorId($id) {
         try {
             $cmdSql = "SELECT * FROM veiculo WHERE veiculo.id = :id";
             $cx_declarada = $this->cx()->prepare($cmdSql);
             $cx_declarada->bindParam('id', $id);          
             $cx_declarada->execute();
-            if($cx_declarada->rowCount() > 0){
-                $cx_declarada->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-                return $cx_declarada->fetch();
-            }            
-            return false;
+            $cx_declarada->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
+            return $cx_declarada->fetch();           
         } catch (\PDOException $e) {
             $this->erro = "Erro ao consultar categoria: " . $e->getMessage();
             return false;
