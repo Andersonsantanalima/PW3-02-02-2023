@@ -1,57 +1,43 @@
 <?php
-class ViewMontadora{
+class ViewCategoria{
     public function exibir($retorno){
         echo json_encode($retorno);
     }
-    public function exibirMontadoras($montadoras){
-        if($montadoras){
+    public function exibirCategorias($categorias){
+        if($categorias){
             http_response_code(200);
             $retorno["result"] = true;
-            $retorno["dados"] = $montadoras;
-            $retorno["itens"] = count($montadoras);
-        }else{
+            $retorno["dados"] = $categorias;
+            $retorno["itens"] = count($categorias);
+        }
+        else{
             http_response_code(404);
             $retorno["result"] = false;
             $retorno["dados"] = [];
             $retorno["itens"] = 0;
-            $retorno["info"] = "Nenhum resultado encontrado para esta consulta.";
+            $retorno['info'] = "Nenhum resultado correspondente para esta consulta.";
         }
         $this->exibir($retorno);
     }
 
-    public function exibirMontadora($montadora){
-        if($montadora){
+    public function exibirCategoria($categoria){
+        if($categoria){
             http_response_code(200);
             $retorno["result"] = true;
-            $retorno["dados"] = $montadora;
+            $retorno["dados"] = $categoria;
             $retorno["itens"] = 1;
-        }else{
+        }
+        else{
             http_response_code(404);
             $retorno["result"] = false;
             $retorno["dados"] = '';
             $retorno["itens"] = 0;
-            $retorno["info"] = "Nenhum resultado encontrado para esta consulta.";
+            $retorno['info'] = "Nenhum resultado correspondente para esta consulta.";
         }
         $this->exibir($retorno);
     }
 
-    
-    public function exibirMontadoraCadastrada($montadora){
-        if($montadora){ 
-            http_response_code(200);
-            $retorno["result"] = true;
-            $retorno["dados"] = $montadora;
-            $retorno["itens"] = 1;
-        }else{
-            http_response_code(404);
-            $retorno["result"] = false;
-            $retorno["dados"] = '';
-            $retorno["itens"] = 0;
-            $retorno["info"] = "Já cadastrado";
-        }
-        $this->exibir($retorno);
-    }
-    public function excluirMontadora($result, $erro){
+    public function deleteCategoria($result, $erro){
         if($result){
             http_response_code(200);
             $retorno["result"] = true;
@@ -62,6 +48,23 @@ class ViewMontadora{
             http_response_code(404);
             $retorno["result"] = false;
             $retorno['erro'] = is_null($erro)?"Registro não encontrado":$erro;
+        }
+        $this->exibir($retorno);
+    }
+
+    public function exibirCategoriaCadastrada($categoria){
+        if($categoria){
+            http_response_code(200);
+            $retorno["result"] = true;
+            $retorno["dados"] = $categoria;
+            $retorno["itens"] = 1;
+        }
+        else{
+            http_response_code(404);
+            $retorno["result"] = false;
+            $retorno["dados"] = '';
+            $retorno["itens"] = 0;
+            $retorno['info'] = "Já cadastrada";
         }
         $this->exibir($retorno);
     }

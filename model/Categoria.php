@@ -20,10 +20,17 @@ class Categoria {
         try {
 
             $cmdSql = "INSERT INTO categoria(tipo, icone) VALUES (:tipo, :icone)";
-            $cx_declarada = $this->cx()->prepare($cmdSql);
+            $pdo = $this->cx();
+            $cx_declarada = $pdo->prepare($cmdSql);
             $cx_declarada->bindParam('tipo', $this->tipo);
             $cx_declarada->bindParam('icone', $this->icone);            
-            return $cx_declarada->execute();
+            $cx_declarada->execute();
+            $c = $this->consultarPorId($pdo->lastInsertId());
+            if($c){
+                return $c;
+            }
+            $this->erro = "Erro ao cadastrar a categoria: " . $e->getMessage();
+            return false;
         } catch (\PDOException $e) {
             $this->erro = "Erro ao cadastrar categoria: " . $e->getMessage();
             return false;
@@ -33,27 +40,28 @@ class Categoria {
     public function alterar() {
 		try {
             $cmdSql = "UPDATE categoria SET tipo = :tipo, icone = :icone WHERE categoria.id = :id";
-            $cx_declarada = $this->cx()->prepare($cmdSql);
+            $pdo = $this->cx();
+            $cx_declarada = $pdo->prepare($cmdSql);
             $cx_declarada->bindParam(':tipo', $this->tipo);
             $cx_declarada->bindParam(':icone', $this->icone);
             $cx_declarada->bindParam(':id', $this->id);
             $cx_declarada->execute();
-            return ($cx_declarada->rowCount() != 0);
+            return $this->consultarPorId($this->id);
         } catch (PDOException $e) {
             $this->erro = "Erro ao alterar categoria: " . $e->getMessage();
             return false;
         }
     }
 
-    public function excluir() {
+    public function excluir($id) {
 		try {
             $cmdSql = "DELETE FROM categoria WHERE categoria.id = :id";
             $cx_declarada = $this->cx()->prepare($cmdSql);
-            $cx_declarada->bindParam(':id', $this->id);            
+            $cx_declarada->bindParam(':id', $id);            
             $cx_declarada->execute();
             return ($cx_declarada->rowCount() != 0);
         } catch (PDOException $e) {
-            $this->erro = "Erro ao excluir categoria. Código do erro: {$e->getCode()}";
+            $this->erro = ["Erro ao excluir categoria", "Código do erro: {$e->getCode()}", "{$e->getMessage()}"];
             return false;
         }
     }
@@ -80,6 +88,7 @@ class Categoria {
         $this->data_alteracao = $c->data_alteracao;
     }
 
+
     public function consultarPorId($id) {
         try {
             $cmdSql = "SELECT * FROM categoria WHERE categoria.id = :id";
@@ -87,12 +96,7 @@ class Categoria {
             $cx_declarada->bindParam('id', $id);          
             $cx_declarada->execute();
             $cx_declarada->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-            $c = $cx_declarada->fetch();
-            if($c){
-                $this->carregar($c);
-                return true;
-            }
-            return false;
+            return $cx_declarada->fetch();           
         } catch (\PDOException $e) {
             $this->erro = "Erro ao consultar categoria: " . $e->getMessage();
             return false;

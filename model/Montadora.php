@@ -29,7 +29,7 @@ class Montadora {
             if($m){
                 return $m;
             }
-            $this->erro = "Erro ao cadastrar montadora: "  ;
+            $this->erro = "Erro ao cadastrar montadora: " . $e->getMessage();
             return false;
         } catch (\PDOException $e) {
             $this->erro = "Erro ao cadastrar montadora: " . $e->getMessage();
@@ -40,23 +40,24 @@ class Montadora {
     public function alterar() {
 		try {
             $cmdSql = "UPDATE montadora SET nome = :nome, logotipo = :logotipo WHERE montadora.id = :id";
-            $cx_declarada = $this->cx()->prepare($cmdSql);
+            $pdo = $this->cx();
+            $cx_declarada = $pdo->prepare($cmdSql);
             $cx_declarada->bindParam(':nome', $this->nome);
             $cx_declarada->bindParam(':logotipo', $this->logotipo);
             $cx_declarada->bindParam(':id', $this->id);
             $cx_declarada->execute();
-            return $cx_declarada->rowCount() != 0;
+            return $this->consultarPorId($this->id);
         } catch (PDOException $e) {
             $this->erro = "Erro ao alterar montadora: " . $e->getMessage();
             return false;
         }
     }
 
-    public function excluir() {
+    public function excluir($id) {
 		try {
             $cmdSql = "DELETE FROM montadora WHERE montadora.id = :id";
             $cx_declarada = $this->cx()->prepare($cmdSql);
-            $cx_declarada->bindParam(':id', $this->id);            
+            $cx_declarada->bindParam(':id', $id);            
             $cx_declarada->execute();
             return ($cx_declarada->rowCount() != 0);
         } catch (PDOException $e) {
@@ -87,24 +88,6 @@ class Montadora {
         $this->data_alteracao = $m->data_alteracao;
     }
 
-    // public function consultarPorId($id) {
-    //     try {
-    //         $cmdSql = "SELECT * FROM montadora WHERE montadora.id = :id";
-    //         $cx_declarada = $this->cx()->prepare($cmdSql);
-    //         $cx_declarada->bindParam('id', $id);          
-    //         $cx_declarada->execute();
-    //         $cx_declarada->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-    //         $m = $cx_declarada->fetch();
-    //         if($m){
-    //             $this->carregar($m);
-    //             return true;
-    //         }
-    //         return false;
-    //     } catch (\PDOException $e) {
-    //         $this->erro = "Erro ao consultar montadora por id: " . $e->getMessage();
-    //         return false;
-    //     }
-    // }
 
     public function consultarPorId($id) {
         try {
@@ -115,7 +98,7 @@ class Montadora {
             $cx_declarada->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
             return $cx_declarada->fetch();           
         } catch (\PDOException $e) {
-            $this->erro = "Erro ao consultar categoria: " . $e->getMessage();
+            $this->erro = "Erro ao consultar montadora: " . $e->getMessage();
             return false;
         }
     }
